@@ -1,0 +1,205 @@
+---
+description: Portfolio design system standard (typography, hierarchy, icons, color, spacing, motion, responsive, accessibility, Tailwind v4 usage). Read before creating or editing any UI.
+globs: app/**/*.tsx,components/**/*.tsx,app/globals.css
+alwaysApply: false
+---
+
+# Portfolio Design System Standard
+
+Tokens live in `app/globals.css` (`@theme inline`). This file is the written standard those tokens implement.
+
+## 0. How to use this document
+
+- **MUST** is a hard rule. **SHOULD** is a default that needs a reason to break. **MAY** is optional.
+- Before writing UI, read the relevant Next.js guide in `node_modules/next/dist/docs/` (required by `AGENTS.md`).
+- Use a token whenever one exists. Arbitrary values (`text-[11px]`, `size-[22px]`, `rounded-[32px]`) are allowed only for a documented exception in section 9. If the same value appears three times, add a token.
+- Work mobile-first. Unprefixed utilities are the mobile style, and `md:` / `lg:` add to them.
+- Before finishing any UI change, run the checklist in section 11.
+
+## 1. Typography
+
+### 1.1 Roles
+
+| Role | Font | Tailwind | Use |
+|---|---|---|---|
+| Primary | Lora (serif) | `font-primary` | Headings, display, pull quotes, case-study titles |
+| Secondary | Plus Jakarta Sans | `font-secondary` | Body copy, UI text, buttons, nav |
+| Mono | DM Mono | `font-mono` | Labels, metadata, timelines, eyebrows (uppercase, tracked) |
+| Logo | Vibur | `font-logo` | The wordmark only. MUST NOT be used anywhere else. |
+
+- Limit each family to two weights.
+- Italic Lora is the emphasis style for headlines (as in *emotionally attuned*). Bold is for one emphasized phrase.
+- Fonts load through `next/font` with `display: swap`. Subset to Latin unless more is needed.
+
+### 1.2 Type scale
+
+Baseline is a 16px body with a 1.2 to 1.25 ratio between steps. Tailwind's defaults (xs 12, sm 14, base 16, lg 18, xl 20, 2xl 24, 3xl 30, 4xl 36, 5xl 48, 6xl 60, 7xl 72) cover everything below the custom tokens.
+
+| Token (utility) | Mobile | Desktop | Line height | Tracking | Family | Use |
+|---|---|---|---|---|---|---|
+| `text-display` | 44px | 80px | 1.08 | -0.01em | Lora | Footer CTA headline |
+| `text-h1` | 36px | 64px | 1.12 | -0.01em | Lora | Page title, hero headline |
+| `text-h2` | 28px | 44px | 1.2 | -0.01em | Lora | Section and chapter titles |
+| `text-quote` | 22px | 32px | 1.4 | 0 | Lora | Pull quotes |
+| `text-2xl` / `text-xl` | 24 / 20px | | 1.3 to 1.4 | 0 | Lora | Card titles (h3), sub-headings (h4) |
+| `text-body-lg` | 16px | 18px | 1.7 | 0 | Jakarta | Lead paragraph (use `text-base` on mobile, `md:text-body-lg`) |
+| `text-base` | 16px | 16px | 1.6 to 1.75 | 0 | Jakarta | Body copy |
+| `text-sm` | 14px | 14px | 1.5 | 0 | Jakarta | Supporting copy in cards |
+| `text-xs` | 12px | 12px | 1.4 | 0 | Jakarta | Captions, stat captions |
+| `text-label` | 12px | 12px | 1.3 | 0.1em | DM Mono | Eyebrow / metadata (add `uppercase font-mono`) |
+
+Rules:
+
+- Sizes are in `rem`, never `px`, so text grows with the user's browser font size.
+- Fluid headings use `clamp()` with a `rem` term in the middle value (see `globals.css`). A pure `vw` middle value does not respond to zoom.
+- Body text MUST be at least 16px on mobile (iOS Safari zooms into inputs under 16px). Text under 12px MUST NOT be used.
+- Line length is 45 to 75 characters. Use `max-w-[52ch]`-style caps for paragraphs and `max-w-[14ch]` to `max-w-[22ch]` for large headings.
+- Use `text-balance` on headings and `text-pretty` on paragraphs.
+- Line height gets looser as text gets smaller: 1.6 to 1.75 for body, about 1.1 for display.
+- All caps only for `text-label`. Never justify text.
+- The type tokens set `line-height` through `var(--tw-leading, ...)`. A `leading-*` utility on the same element (at any breakpoint) overrides the token's line height, including at larger breakpoints.
+
+## 2. Hierarchy
+
+- One `<h1>` per page. Headings run in order (h1, h2, h3) with no skipped levels. Choose the level for document structure and the size for the visual look.
+- Show hierarchy with several signals together: size, weight, color, and space.
+- Adjacent heading levels differ by at least 1.2x, or by a clear change in family or weight.
+- Reading order has three tiers: (1) headline or key number, (2) supporting text, (3) metadata in mono labels.
+- Proximity groups content. Space between groups is at least twice the space inside a group: 8 to 16px inside a group, 32 to 64px between groups, 96 to 192px between sections.
+- Text color: `text-ink` for primary text, `text-ink-muted` (#5a5454) for secondary text, `text-ink-muted-soft` (#6b6565) for tertiary text and decorative glyphs. Do not use opacity (`text-ink/70`) for text color, because it is hard to audit for contrast.
+- Show a case-study chapter's position with the `ChapterLabel` ("01 · Context") pattern.
+
+## 3. Iconography
+
+### 3.1 Standard size scale
+
+| Size | Token (utility) | Use | Industry reference |
+|---|---|---|---|
+| 16px | `size-icon-sm` | Dense UI, inline with 12 to 14px text | Heroicons micro, Carbon sm |
+| 20px | `size-icon-md` | Default UI, nav pills, brand glyphs | Heroicons mini, Polaris |
+| 22px | `size-icon-section` | Section titles only (project choice) | Off-scale on purpose |
+| 24px | `size-icon-lg` | Logo sparkle, icon buttons, 18 to 20px text | Material, Lucide |
+| 32px | `size-8` | Cards, feature lists | Carbon |
+| 40 to 48px | `size-10` / `size-12` | Empty states, feature tiles | Material |
+
+- Match icon size to text: 16px for 12 to 14px text, 20px for 16px text, 24px for 18 to 20px text.
+- Align icons optically to the text with `inline-flex items-center`.
+- Icons use `currentColor` only. No icon hard-codes a fill.
+- Keep 4 to 8px between an icon and its label.
+- The five pixel icons (cursor, email, smiley, frog, sparkles) are drawn on a 20px grid. They are sharpest at 20px and 40px. Do not use them under 20px.
+- Placement: nav pills use `size-icon-md`, section titles use `size-icon-section`, the logo sparkle uses `size-icon-lg`.
+
+### 3.2 Hit areas
+
+- The visual icon can be 20 to 24px, but its clickable target MUST be at least 24x24 CSS px (WCAG 2.2 AA, 2.5.8). Aim for 44x44 where space allows (Apple 44pt, Material 48dp). Mobile nav pills are 44x44.
+- Add padding or an invisible hit area instead of enlarging the icon. Keep at least 8px between neighboring targets.
+
+### 3.3 Icon accessibility
+
+- Decorative icons get `aria-hidden`.
+- An icon that is the only content of a control needs `aria-label` on the control.
+- Icons that carry meaning need 3:1 contrast (WCAG 1.4.11). Meaning never depends on an icon or color alone.
+
+## 4. Color
+
+- Layers, from raw to specific: (1) primitives (`oatmeal #faf9f7`, `ink #403a3a`, `sand #f1ece4`, `slate-deep #1f2a33`, plus `ink-muted` and `ink-muted-soft`), (2) semantic (`background`, `foreground`), (3) component-level (build these only when a component needs its own).
+- Components use semantic or named tokens. Do not introduce new raw hex values in components.
+- Measured contrast (approximate): `ink` on `oatmeal` is about 10.6:1, `ink-muted` about 7:1, `ink-muted-soft` about 5.4:1. All pass 4.5:1 for small text.
+- Define hover, active, focus, and disabled colors for every interactive element.
+- Dark mode is a project decision. If added, the code MUST NOT assume light mode.
+
+## 5. Spacing, grid, radius, elevation
+
+- Base unit is 4px. Layout spacing is a multiple of 8px.
+- Grid: 4 columns on mobile, 8 on tablet, 12 on desktop. Gutters are 16px on mobile and 24px on desktop. The container maxes out at 1200px (nav is 1120px). Page padding is `px-6 md:px-10`.
+- Tailwind v4 default breakpoints: `sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2xl` 1536. Design for 360, 768, 1024, and 1440. Do not add device-specific breakpoints.
+- Radius scale: `rounded-control` 12px (small controls, nested images), `rounded-image` 22px (image inside a card), `rounded-card` 32px (cards, framed images), `rounded-panel` 40px (large panels), `rounded-full` for pills.
+- Elevation tokens: `shadow-card`, `shadow-card-hover`, `shadow-glass` (frosted bars), `shadow-pill` (nav pill hover and active), `shadow-dialog` (modal). Do not add another without a reason.
+- Z-index: content 0 to 1, nav 50, dialog 60, overlay 100. Use plain utilities (`z-50`, `z-100`), not `z-[n]`.
+
+## 6. Motion
+
+- Durations: 150ms for micro-interactions, 300ms for UI transitions, 500 to 900ms for entrances.
+- Easing: ease-out for entering, ease-in for leaving. `--ease-enter` (`cubic-bezier(0.2, 0.7, 0.2, 1)`) is the standard entrance.
+- Animate `opacity` and `transform` only.
+- Every animation MUST have a `prefers-reduced-motion` fallback (`motion-safe:` / `motion-reduce:`).
+- Autoplaying motion longer than 5 seconds needs a pause control (WCAG 2.2.2). Nothing flashes more than 3 times per second.
+- Content that appears on hover or focus (nav pill label, hero emoji) must be dismissible, hoverable, and persistent (WCAG 1.4.13), and keyboard users must get the same content as mouse users.
+
+## 7. Responsive and mobile
+
+- Mobile-first. Start with the single-column layout, then add `md:` and `lg:`.
+- Use `rem`, `%`, `fr`, `clamp()`, and `ch`. Avoid fixed `px` widths on layout containers.
+- Use `min-h-svh` or `min-h-dvh` for full-height sections, never `100vh`.
+- Respect safe areas on notched phones with `env(safe-area-inset-*)` for fixed bars.
+- Touch targets are at least 44px where possible (see 3.2).
+- Hover is a bonus, never the only way to reach content. Tailwind v4's `hover:` applies only on devices that support hover. The custom `touch` variant (`@media (hover: none)`) handles touch-only styles, and every hover-only detail needs a touch equivalent.
+- Use container queries (`@container`, `@md:`) for components that live in different widths.
+- Images always get `sizes`, an aspect ratio, and `priority` only for the first screen. Reserve space so the layout doesn't shift (CLS under 0.1).
+- At 320px wide nothing scrolls sideways (WCAG 1.4.10). At 200% zoom nothing is cut off.
+
+## 8. Accessibility (WCAG 2.2 AA)
+
+- **Contrast:** 4.5:1 for normal text, 3:1 for large text (24px, or 18.66px bold), icons, and control borders.
+- **Focus:** every interactive element has a visible `focus-visible` style (2px outline, 2px offset). Never use `outline-none` without a replacement. Fixed navigation must not hide a focused element (2.4.11), so `scroll-padding-top` stays at least as tall as the nav (it is 96px).
+- **Keyboard:** everything works with Tab, Enter, Space, and Escape. Tab order matches visual order. Dialogs trap focus and return it on close (native `<dialog>` does this).
+- **Structure:** landmarks (`header`, `nav`, `main`, `footer`), a skip-to-content link, one `h1` per page, and `aria-current` on the current page.
+- **Labels:** icon-only controls have `aria-label`. Link text makes sense out of context. External links say they open in a new tab.
+- **Text:** do not clip text boxes (user spacing overrides, 1.4.12), and keep a 1.5 line height available for body text.
+- **Color:** meaning never depends on color alone. Test `forced-colors` mode.
+- **Language and media:** `<html lang="en">` is set. Every image has useful `alt`, or `alt=""` if decorative.
+- **Tooling:** run axe or Lighthouse on each page, and do a manual keyboard pass and a screen-reader pass. Consider adding `eslint-plugin-jsx-a11y`.
+
+## 9. Tailwind principles for this repo
+
+- Utility-first. Build reusable pieces as components (`SectionLabel`, `NavPill`, `ChapterLabel`), not `@apply` classes.
+- Put design values in `@theme` (colors, type, icon sizes, radius, shadows, easings). Components use the generated utilities.
+- Prefer built-in utilities (`size-5`, `gap-4`, `text-balance`) and tokens over arbitrary values.
+- Use state and data variants: `hover:`, `focus-visible:`, `aria-[current=page]:`, `data-[state=open]:`, `group-hover:`, `motion-safe:`.
+- Use `gap` for spacing between siblings, not margins on individual children.
+- Add `min-w-0` to flex and grid children so long text can truncate.
+- Sort classes with `prettier-plugin-tailwindcss` if added.
+- Naming: semantic names (`text-ink-muted`) over descriptive ones (`text-gray-600`). One name per concept.
+
+### Documented exceptions (arbitrary values still allowed)
+
+- Case-study hero title: `text-[clamp(1.875rem,4.4vw,3.5rem)]` (smaller than `text-h1` on purpose).
+- Case-study stat numbers: `text-[clamp(2rem,4vw,3rem)]`.
+- Case-study chapter sub-headlines: `md:text-[32px]` and `md:text-[28px]` with their `leading-*`.
+- Hero emoji sizes (`size-[1.85rem]` and similar). These are emoji art, not UI icons.
+- No-hover hero headline (`.hero-touch-intro`): `font-size: clamp(0.75rem, calc((100cqi - 0.75rem) / 10.6), 4rem)`. The longest phrase is about 10.4em in Lora, so this keeps each phrase on one line.
+- Narrow hover hero (`.hero-hover-stack`, under 48rem): `font-size: min(var(--text-h1), max(0.75rem, calc((100cqi - 0.75rem) / 10.6)))`. Same 10.4em phrase, capped by the h1 token so it only shrinks once a line would overflow. Floor is 12px.
+- No-hover hero subtext (`.hero-subtext-touch`): `font-size: clamp(0.75rem, calc((100cqi - 0.75rem) / 10.6 * 1.25 / 4), 1.25rem)`. Same column as the tagline, scaled by the desktop ratio of text-xl (1.25rem) to the text-h1 cap (4rem). Floor is 0.75rem so it stays at least 12px.
+- Hover hero subtext (`.hero-subtext-hover`): under 48rem, same `cqi` formula as touch (pairs with `.hero-hover-stack`). From 48rem up, `clamp(0.75rem, calc(0.4375rem + 1.125vw), 1.25rem)` — the `text-h1` vw curve scaled by 1.25/4.
+- Compact nav (bar under 36rem): wordmark, sparkle, pill icons, pill labels (`clamp(0.75rem, 3.4cqi, 0.875rem)`), and circles use `clamp()` with `cqi` so a 412px screen is about 15% smaller than the full sizes.
+- Section label icons (Work, Fun, About): `size-[1.2lh]`, so the mark sits a little taller than the label’s line height.
+- `max-w-[…ch]` and `max-w-[…px]` content-width caps, and `bg-[#e6e3de]` image placeholder color.
+
+Any new arbitrary value needs a reason or a new token.
+
+## 10. Design system elements to keep in mind
+
+- **Component inventory:** list each component with its variants and states (default, hover, focus, active, disabled, loading, error).
+- **Page states:** empty, loading, error, and 404 pages. The case-study placeholder images are the start of an empty pattern.
+- **Content guidelines:** tone, capitalization (lowercase nav), date formats (`Jun ’22 – Mar ’25`), and a metric style for callouts.
+- **Image standards:** aspect ratios (16:10, 4:3, 1:1), formats (AVIF/WebP), a maximum file size, and an alt-text format.
+- **Print styles:** a clean print view for case studies.
+- **Metadata:** per-page title, description, Open Graph image, favicon set, `theme-color`.
+- **Performance budgets:** LCP under 2.5s, CLS under 0.1, INP under 200ms, at most four font files.
+- **Living docs:** a style page (for example `/design-system`) that shows tokens, type scale, icons, and components.
+- **Governance:** how a new token or component is added, and a changelog.
+
+## 11. Definition of done (every UI change)
+
+- [ ] Uses tokens from `@theme`, and any arbitrary value is a listed exception.
+- [ ] Type uses the scale in section 1, body is at least 16px, nothing under 12px, sizes in `rem`.
+- [ ] One `h1` per page, headings in order, and visual hierarchy is clear at a glance.
+- [ ] Icons use `size-icon-*`, `currentColor`, and sit in a 24px+ hit area (44px where possible).
+- [ ] Text contrast is at least 4.5:1, and icon and border contrast is at least 3:1.
+- [ ] Visible focus on every control, and the page works with the keyboard alone.
+- [ ] Works at 320, 768, 1024, and 1440 widths, with no horizontal scroll, and at 200% zoom.
+- [ ] No content is available only on hover, and touch has an equivalent.
+- [ ] `prefers-reduced-motion` is honored.
+- [ ] Images have `alt`, `sizes`, and reserved space.
+- [ ] `npx tsc --noEmit` passes. Run ESLint on the changed files and don't add new errors.
+- [ ] Restart `next dev` if new utilities don't appear (the Turbopack Tailwind loader can serve a stale stylesheet).

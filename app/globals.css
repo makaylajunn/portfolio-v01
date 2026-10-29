@@ -1,0 +1,1029 @@
+@import "tailwindcss";
+
+/* Matches devices with no real hover (phones/tablets). Used to show
+   hover-only details by default on touch. */
+@custom-variant touch (@media (hover: none));
+
+:root {
+  /* Design tokens: oatmeal canvas, warm ink, deep slate accents */
+  --background: #faf9f7; /* Oatmeal */
+  --foreground: #403a3a;
+}
+
+@theme inline {
+  /* Colors */
+  --color-oatmeal: #faf9f7;
+  --color-ink: #403a3a;
+  /** Muted body / label text (darker than legacy ink/50–70 utilities). */
+  --color-ink-muted: #5a5454;
+  --color-ink-muted-soft: #6b6565;
+  --color-slate-deep: #1f2a33;
+  --color-sand: #f1ece4;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Fonts: primary = Lora, secondary = Plus Jakarta Sans, mono = DM Mono */
+  --font-primary: var(--font-lora), ui-serif, Georgia, serif;
+  --font-secondary: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+  /* Logo wordmark only (Vibur) */
+  --font-logo: var(--font-vibur), "Brush Script MT", cursive;
+
+  /* Type scale (see .cursor/rules/design-system.mdc, section 1).
+     Fluid steps use a rem term so they respond to browser zoom. */
+  --text-display: clamp(2.75rem, 1.6rem + 4.6vw, 5rem);
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.01em;
+  --text-h1: clamp(2.25rem, 1.4rem + 3.6vw, 4rem);
+  --text-h1--line-height: 1.12;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h2: clamp(1.75rem, 1.1rem + 2.4vw, 2.75rem);
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.01em;
+  --text-quote: clamp(1.375rem, 1.1rem + 1.2vw, 2rem);
+  --text-quote--line-height: 1.4;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.7;
+  /* Mono eyebrow / metadata label. Minimum 12px, always uppercase. */
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.1em;
+
+  /* Icon sizes: sizing utilities such as size-icon-md */
+  --spacing-icon-sm: 1rem; /* 16px dense UI */
+  --spacing-icon-md: 1.25rem; /* 20px default UI, nav pills, brand glyphs */
+  --spacing-icon-section: 1.375rem; /* 22px section titles (project choice) */
+  --spacing-icon-lg: 1.5rem; /* 24px logo sparkle, icon buttons */
+
+  /* Radius scale */
+  --radius-control: 0.75rem; /* 12px small controls */
+  --radius-image: 1.375rem; /* 22px image inside a card */
+  --radius-card: 2rem; /* 32px cards and framed images */
+  --radius-panel: 2.5rem; /* 40px large panels */
+
+  /* Motion */
+  --ease-enter: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgb(64 58 58 / 0.04),
+    0 12px 32px -12px rgb(64 58 58 / 0.1);
+  --shadow-card-hover: 0 2px 4px rgb(64 58 58 / 0.04),
+    0 32px 64px -24px rgb(64 58 58 / 0.22);
+  /* Frosted-glass bars (site nav, chapter nav) */
+  --shadow-glass: inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 8px 32px -8px rgb(64 58 58 / 0.16);
+  /* Nav pill hover / active */
+  --shadow-pill: inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 8px 20px -6px rgb(30 40 50 / 0.35);
+  /* Modal dialog */
+  --shadow-dialog: 0 48px 96px -24px rgb(64 58 58 / 0.4);
+}
+
+html {
+  /* In-page nav uses JS smooth scroll (see lib/smoothScroll.ts). */
+  scroll-behavior: auto;
+  scroll-padding-top: 96px;
+  overflow-x: clip;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+.page-enter {
+  animation: page-enter 320ms ease-out both;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-primary);
+}
+
+/* Hand cursor on interactive elements — no custom cursor overlays elsewhere */
+:is(
+  a[href],
+  button:not(:disabled),
+  [role="button"],
+  [role="link"],
+  summary,
+  label[for],
+  select,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  [tabindex]:not([tabindex="-1"])
+) {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Hero entrance (staggered with --d) */
+.rise {
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+
+/* Scroll-driven reveal. Pure CSS; browsers without support just show content. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+
+  /* About narrative: image and copy unfold as each beat enters view. */
+  @keyframes about-unfold {
+    from {
+      opacity: 0;
+      transform: translateY(36px);
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .about-reveal-image,
+  .about-reveal-text {
+    animation: about-unfold linear both;
+    animation-timeline: view();
+  }
+
+  .about-reveal-image {
+    animation-range: entry 0% entry 42%;
+  }
+
+  .about-reveal-text {
+    animation-range: entry 6% entry 48%;
+  }
+}
+
+/* Work snapshots: staggered fade when landing on /#work from another page (e.g. About). */
+.work-cards-pending .work-card {
+  opacity: 0;
+}
+
+@keyframes work-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+.work-cards-enter .work-card.reveal {
+  animation: work-card-enter 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(140ms + var(--card-i, 0) * 95ms);
+}
+
+@supports (animation-timeline: view()) {
+  .work-cards-enter .work-card.reveal {
+    animation-timeline: auto;
+    animation-range: normal;
+  }
+}
+
+/* Case study reading progress: a thin line across the top that fills as you
+   scroll. Pure CSS; browsers without scroll timelines simply don't show it. */
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.read-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 2px;
+  background: var(--color-slate-deep);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+@supports (animation-timeline: scroll()) {
+  .read-progress {
+    animation: progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+/* About timeline: a line down the spine that fills as you scroll through it.
+   The range is trimmed (10% to 90%) so the fill roughly tracks the middle of
+   the viewport. Browsers without scroll timelines just see the faint track. */
+@keyframes progress-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.spine-fill {
+  transform: scaleY(0);
+  transform-origin: top;
+}
+@supports (animation-timeline: view()) {
+  .spine-fill {
+    animation: progress-y linear both;
+    animation-timeline: view();
+    animation-range: cover 10% cover 90%;
+  }
+}
+
+/* Case study "scene": image + panel tilt gently toward the cursor.
+   --tx / --ty are set in [-1, 1] by the pointer handler. */
+.scene {
+  transform: perspective(1200px) rotateX(calc(var(--ty, 0) * -1.4deg))
+    rotateY(calc(var(--tx, 0) * 1.4deg));
+}
+
+/* Soft light that follows the cursor over an image */
+.spotlight {
+  background: radial-gradient(
+    360px circle at var(--mx, 50%) var(--my, 50%),
+    rgb(255 255 255 / 0.5),
+    transparent 60%
+  );
+}
+
+/* Blueprint dots for image placeholders */
+.dots {
+  background-image: radial-gradient(
+    rgb(64 58 58 / 0.14) 1px,
+    transparent 1.5px
+  );
+  background-size: 16px 16px;
+}
+
+.fun-tile-grain {
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* PetalTimer tile — brand mesh + grain; pointer pan like nav pills (--pill-x/y) */
+.fun-mascot-tile {
+  --pill-x: 50;
+  --pill-y: 50;
+}
+
+.fun-mascot-bg {
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #097c87;
+  /* Static underlay — never pans, so corners always read as gradient */
+  background-image: linear-gradient(
+    135deg,
+    #097c87 0%,
+    #0d848f 28%,
+    #2ed1db 48%,
+    #a1cca6 62%,
+    #2ed1db 82%,
+    #097c87 100%
+  );
+  background-size: cover;
+  background-position: center;
+}
+
+.fun-mascot-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(at 0% 0%, #097c87 0px, transparent 55%),
+    radial-gradient(at 22% 18%, #097c87 0px, transparent 52%),
+    radial-gradient(at 38% 28%, #2ed1db 0px, transparent 54%),
+    radial-gradient(at 50% 44%, #2ed1db 0px, transparent 42%),
+    radial-gradient(at 8% 92%, rgb(249 215 121 / 0.7) 0px, transparent 22%),
+    radial-gradient(at 8% 78%, #a1cca6 0px, transparent 56%),
+    radial-gradient(at 40% 72%, #a1cca6 0px, transparent 58%),
+    radial-gradient(at 92% 16%, #2ed1db 0px, transparent 50%),
+    radial-gradient(at 100% 44%, #2ed1db 0px, transparent 54%),
+    radial-gradient(at 88% 82%, #097c87 0px, transparent 58%),
+    radial-gradient(at 100% 0%, #097c87 0px, transparent 50%);
+  background-size: 200% 200%;
+  background-position: calc(50% + (var(--pill-x) - 50) * 0.55%)
+    calc(50% + (var(--pill-y) - 50) * 0.55%);
+  transition: background-position 0.35s ease-out;
+}
+
+.fun-mascot-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.float {
+  animation: float 4.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+.blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 5.5s infinite;
+}
+
+@keyframes squish {
+  30% {
+    transform: scale(1.12, 0.86);
+  }
+  60% {
+    transform: scale(0.94, 1.08);
+  }
+}
+.squish {
+  transform-origin: 50% 90%;
+  animation: squish 0.5s ease-out;
+}
+
+@keyframes wiggle {
+  20% {
+    transform: rotate(-8deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(7deg) scale(1.1);
+  }
+  80% {
+    transform: rotate(-3deg) scale(1.05);
+  }
+}
+
+/* ---------- Hero tagline ---------- */
+
+@keyframes hero-emoji-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) translateX(-6px) scale(0.25) rotate(-22deg);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-7px) scale(1.1) rotate(7deg);
+  }
+  78% {
+    transform: translateY(2px) scale(0.97) rotate(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.hero-emoji-pop {
+  opacity: 0;
+  transform: translateY(8px) scale(0.85);
+}
+
+.hero-emoji-pop--shown {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.hero-emoji-pop--anim {
+  animation: hero-emoji-arrive 0.72s cubic-bezier(0.34, 1.35, 0.48, 1) both;
+  animation-delay: calc(var(--pop-i, 0) * 85ms);
+}
+
+@keyframes hero-emoji-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(14px) scale(0.82) rotate(10deg);
+  }
+}
+
+.hero-emoji-pop--exit {
+  animation: hero-emoji-leave 0.52s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: calc(var(--pop-i, 0) * 40ms);
+}
+
+.hero-complex__shine-wrap {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.hero-complex--engaged .hero-complex__shine-wrap,
+.hero-complex--receding .hero-complex__shine-wrap {
+  opacity: 1;
+}
+
+.hero-complex--receding .hero-complex__shine-wrap {
+  opacity: 0;
+  transition-duration: 0.45s;
+}
+
+.hero-complex--engaged .hero-shine {
+  animation: hero-shine-sweep 0.88s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.hero-complex--engaged .hero-jump-letter {
+  animation: hero-letter-jump 0.576s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation-delay: calc(var(--jump-i, 0) * 30ms);
+}
+
+.hero-complex--receding .hero-jump-letter {
+  animation: hero-letter-jump 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both;
+  animation-delay: calc(var(--jump-i, 0) * 22ms);
+}
+
+@keyframes hero-marker-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero-marker {
+  position: relative;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.hero-marker__ink {
+  position: absolute;
+  inset: 0.08em -0.12em;
+  z-index: -1;
+  border-radius: 3px;
+  background: rgb(254 249 195 / 0.82);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.hero-marker__ink--run {
+  animation: hero-marker-draw 1.301s cubic-bezier(0.22, 1, 0.32, 1) forwards;
+}
+
+@media (hover: none) {
+  .hero-marker__ink--run {
+    animation-duration: 0.92s;
+  }
+}
+
+.hero-marker__ink--hold {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+@keyframes hero-marker-undraw {
+  from {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+.hero-marker__ink--reverse {
+  animation: hero-marker-undraw 1.301s cubic-bezier(0.22, 1, 0.32, 1) forwards;
+}
+
+/* No-hover hero subtext. Same column as the tagline (divisor 10.6).
+   Desktop pair is a 4rem tagline and 1.25rem subtext, so the fluid size is
+   that column times 1.25/4. Floor matches the tagline minimum (12px). */
+.hero-subtext-touch {
+  font-size: clamp(0.75rem, calc((100cqi - 0.75rem) / 10.6 * 1.25 / 4), 1.25rem);
+  line-height: 1.65;
+}
+
+/* Hover hero subtext: text-xl (1.25rem) from the nav/tablet band up — same as md+ desktop.
+   Does not shrink with the tagline cqi column under md. Touch subtext still tracks cqi. */
+.hero-subtext-hover {
+  font-size: clamp(0.875rem, calc(0.4375rem + 1.125vw), 1.25rem);
+  line-height: 1.65;
+}
+
+@media (min-width: 36rem) {
+  .hero-subtext-hover {
+    font-size: 1.25rem;
+  }
+}
+
+@media (hover: none) {
+  /* Landing starts blank except the nav. The sequence owns the entrance. */
+  .home-landing.page-enter,
+  .about-landing.page-enter {
+    animation: none;
+  }
+
+  .hero-touch-pending {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .hero-subtext-touch {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.15s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .hero-subtext-touch.home-touch-fade--in {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .home-touch-fade--wait {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .home-touch-fade--in {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 1.15s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* Scroll-driven .reveal stays at opacity 0 until in-view; while the wrapper
+     was hidden that timeline never completes, so reset once we fade the block in. */
+  .home-touch-fade--wait .reveal,
+  .home-touch-fade--in .reveal {
+    animation: none;
+    animation-timeline: auto;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: show the landing immediately. The sequence must not leave it blank. */
+@media (hover: none) and (prefers-reduced-motion: reduce) {
+  .hero-touch-pending,
+  .hero-subtext-touch,
+  .home-touch-fade--wait {
+    animation: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: none;
+  }
+}
+
+@keyframes hero-read-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* No-hover hero. The headline is a container, and "complex care systems."
+   is ~10.4em in Lora. The gutter keeps that phrase inside the box. */
+.hero-touch-intro {
+  font-size: clamp(0.75rem, calc((100cqi - 0.75rem) / 10.6), 4rem);
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+}
+
+/* Hover hero under md: the five phrases each stay on one line.
+   Follow the h1 size until the longest phrase would overflow, then shrink.
+   10.6em leaves a gutter around "complex care systems." (~10.4em). Floor 12px. */
+@media (max-width: 47.999rem) {
+  .hero-hover-stack {
+    font-size: min(
+      var(--text-h1),
+      max(0.75rem, calc((100cqi - 0.75rem) / 10.6))
+    );
+  }
+
+  .hero-hover-phrase {
+    white-space: nowrap;
+  }
+
+  /* Stacked hover headline: attuned faces beside “I design” match touch intro timing. */
+  @media (hover: hover) {
+    .hero-hover-stack .hero-emoji-pop--anim {
+      animation-duration: 0.576s;
+      animation-delay: 0s;
+    }
+  }
+}
+
+@media (min-width: 48rem) {
+  .hero-touch-intro {
+    line-height: 1.38;
+  }
+}
+
+.hero-read-chunk {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .hero-read-chunk:not(.hero-read-chunk--on) {
+    opacity: 0;
+  }
+  .hero-read-chunk--on {
+    animation: hero-read-in 0.85s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+  }
+
+  .hero-jump-letter {
+    display: inline-block;
+  }
+
+  /* HeroHeadlineTouchIntro — 20% faster than baseline durations */
+  .hero-touch-intro .hero-read-chunk--on {
+    animation-duration: 0.68s;
+  }
+
+  .hero-touch-intro .hero-marker__ink--run,
+  .hero-touch-intro .hero-marker__ink--reverse {
+    animation-duration: 0.736s;
+  }
+
+  /* 0.576s is TOUCH_EMOJI_POP_MS. Delay stays 0 so the three faces finish together. */
+  .hero-touch-intro .hero-emoji-pop--anim {
+    animation-duration: 0.576s;
+    animation-delay: 0s;
+  }
+
+  .hero-touch-intro .hero-emoji-pop--exit {
+    animation-duration: 0.416s;
+    animation-delay: calc(var(--pop-i, 0) * 32ms);
+  }
+
+  .hero-touch-intro .hero-complex--engaged .hero-shine {
+    animation-duration: 0.704s;
+  }
+
+  .hero-touch-intro .hero-complex--engaged .hero-jump-letter {
+    animation-duration: 0.461s;
+    animation-delay: calc(var(--jump-i, 0) * 24ms);
+  }
+
+  .hero-touch-intro .hero-complex--receding .hero-jump-letter {
+    animation-duration: 0.416s;
+    animation-delay: calc(var(--jump-i, 0) * 18ms);
+  }
+
+  .hero-touch-intro .hero-complex__shine-wrap {
+    transition-duration: 0.28s;
+  }
+
+  .hero-touch-intro .hero-complex--receding .hero-complex__shine-wrap {
+    transition-duration: 0.36s;
+  }
+}
+
+@keyframes hero-shine-sweep {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -200% center;
+  }
+}
+
+.hero-shine {
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.85) 50%,
+    transparent 65%
+  );
+  background-size: 220% 100%;
+  opacity: 0.55;
+}
+
+@keyframes hero-letter-jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.1em);
+  }
+}
+
+.logo-sparkle-star,
+.logo-sparkle-plus {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Logo sparkles: half turn (rotation only in first ~third), pause, bounce pop */
+@keyframes logo-sparkle-star-spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  32% {
+    transform: rotate(180deg) scale(1);
+  }
+  32%,
+  44% {
+    transform: rotate(180deg) scale(1);
+  }
+  54% {
+    transform: rotate(180deg) scale(1.22);
+  }
+  60% {
+    transform: rotate(180deg) scale(0.94);
+  }
+  66% {
+    transform: rotate(180deg) scale(1.06);
+  }
+  72%,
+  100% {
+    transform: rotate(180deg) scale(1);
+  }
+}
+
+@keyframes logo-sparkle-plus-spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  35% {
+    transform: rotate(180deg) scale(1);
+  }
+  35%,
+  48% {
+    transform: rotate(180deg) scale(1);
+  }
+  58% {
+    transform: rotate(180deg) scale(1.18);
+  }
+  64% {
+    transform: rotate(180deg) scale(0.95);
+  }
+  70% {
+    transform: rotate(180deg) scale(1.05);
+  }
+  76%,
+  100% {
+    transform: rotate(180deg) scale(1);
+  }
+}
+
+.logo-sparkle-star--run {
+  animation: logo-sparkle-star-spin 1.8s cubic-bezier(0.42, 0, 0.2, 1) both;
+}
+
+.logo-sparkle-plus--run {
+  animation: logo-sparkle-plus-spin 1.8s cubic-bezier(0.42, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-sparkle-star--run,
+  .logo-sparkle-plus--run {
+    animation: none;
+  }
+}
+
+/* ---------- Dialog ---------- */
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+dialog[open] {
+  animation: pop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+dialog::backdrop {
+  animation: fade 0.3s ease both;
+}
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* ---------- Nav pills: mesh gradient hover fills ---------- */
+
+.nav-pill-scene {
+  --pill-x: 50;
+  --pill-y: 50;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.nav-pill-scene::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(1.05)
+    translate(
+      calc((var(--pill-x) - 50) * 0.35%),
+      calc((var(--pill-y) - 50) * 0.35%)
+    );
+  background-size: 165% 165%;
+  background-position: calc(var(--pill-x) * 1%) calc(var(--pill-y) * 1%);
+  transition:
+    opacity 0.45s ease,
+    transform 0.35s ease-out,
+    background-position 0.35s ease-out;
+}
+
+.nav-pill-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
+.nav-pill-scene:hover::before,
+.nav-pill-scene:focus-visible::before,
+.nav-pill-scene--active::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.nav-pill-scene:hover::after,
+.nav-pill-scene:focus-visible::after,
+.nav-pill-scene--active::after {
+  opacity: 0.28;
+}
+
+.nav-pill-scene__inner {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink);
+  transition: gap 0.3s ease;
+}
+
+.nav-pill-scene__icon {
+  line-height: 0;
+}
+
+.nav-pill-scene__label {
+  line-height: 1;
+}
+
+.nav-pill-scene:hover .nav-pill-scene__inner,
+.nav-pill-scene:focus-visible .nav-pill-scene__inner,
+.nav-pill-scene--active .nav-pill-scene__inner {
+  gap: 0.375rem;
+  color: var(--color-ink);
+}
+
+/* Nav mesh: fun palette (#ffb8d4 · #ffe878 · #88ddb0 · #a8c8ff · #fff · #d8a8f0), rotated per pill */
+.nav-pill-scene--fun::before {
+  background-color: #fff6f2;
+  background-image:
+    radial-gradient(at 14% 24%, #ffb8d4 0px, transparent 50%),
+    radial-gradient(at 88% 18%, #ffe878 0px, transparent 44%),
+    radial-gradient(at 78% 76%, #88ddb0 0px, transparent 52%),
+    radial-gradient(at 22% 78%, #a8c8ff 0px, transparent 48%),
+    radial-gradient(at 52% 42%, #ffffff 0px, transparent 40%),
+    radial-gradient(at 38% 12%, #d8a8f0 0px, transparent 42%);
+}
+
+/* ~90° — warm accent leads top-right */
+.nav-pill-scene--work::before {
+  background-color: #fff6f2;
+  background-image:
+    radial-gradient(at 24% 86%, #ffb8d4 0px, transparent 50%),
+    radial-gradient(at 12% 18%, #ffe878 0px, transparent 44%),
+    radial-gradient(at 76% 22%, #88ddb0 0px, transparent 52%),
+    radial-gradient(at 78% 78%, #a8c8ff 0px, transparent 48%),
+    radial-gradient(at 48% 52%, #ffffff 0px, transparent 40%),
+    radial-gradient(at 12% 38%, #d8a8f0 0px, transparent 42%);
+}
+
+/* ~180° — mirrored from fun */
+.nav-pill-scene--about::before {
+  background-color: #fff6f2;
+  background-image:
+    radial-gradient(at 86% 76%, #ffb8d4 0px, transparent 50%),
+    radial-gradient(at 12% 82%, #ffe878 0px, transparent 44%),
+    radial-gradient(at 22% 24%, #88ddb0 0px, transparent 52%),
+    radial-gradient(at 78% 22%, #a8c8ff 0px, transparent 48%),
+    radial-gradient(at 48% 58%, #ffffff 0px, transparent 40%),
+    radial-gradient(at 62% 88%, #d8a8f0 0px, transparent 42%);
+}
+
+/* about mesh rotated 90° clockwise */
+.nav-pill-scene--contact::before {
+  background-color: #fff6f2;
+  background-image:
+    radial-gradient(at 76% 14%, #ffb8d4 0px, transparent 50%),
+    radial-gradient(at 82% 88%, #ffe878 0px, transparent 44%),
+    radial-gradient(at 24% 78%, #88ddb0 0px, transparent 52%),
+    radial-gradient(at 22% 22%, #a8c8ff 0px, transparent 48%),
+    radial-gradient(at 58% 52%, #ffffff 0px, transparent 40%),
+    radial-gradient(at 88% 38%, #d8a8f0 0px, transparent 42%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill-scene::before {
+    transform: none;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .page-enter {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .scene {
+    transform: none;
+  }
+  .spine-fill {
+    animation: none;
+    transform: none;
+  }
+  .hero-read-chunk:not(.hero-read-chunk--on) {
+    opacity: 1;
+  }
+  .hero-read-chunk--on {
+    animation: none;
+  }
+  .hero-complex--engaged .hero-jump-letter,
+  .hero-complex--receding .hero-jump-letter {
+    animation: none;
+  }
+}
