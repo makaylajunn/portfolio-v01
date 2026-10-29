@@ -4,16 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { ContactFooter } from "@/components/ContactFooter";
 import { PETALTIMER } from "@/lib/fun/petaltimer";
-import {
-  consumeCrossPageHomeEnter,
-  peekCrossPageHomeEnter,
-} from "@/lib/sectionEnter";
+import { consumeSectionEnter } from "@/lib/sectionEnter";
 import { HeroHeadline, usePrefersNoHover } from "@/components/home/HeroHeadline";
 import { usePageEnterReplay } from "@/lib/pageEnterReplay";
-import {
-  useTouchContentReveal,
-  useTouchLandingSequence,
-} from "@/lib/touchLandingSequence";
+import { useTouchLandingSequence } from "@/lib/touchLandingSequence";
 import { CursorIcon, FrogIcon } from "@/components/icons/UiIcons";
 import {
   useEffect,
@@ -427,13 +421,7 @@ function GridOverlay() {
    HERO
    ========================================================================== */
 
-function HeroSubtext({
-  touchClass,
-  crossPageEnter,
-}: {
-  touchClass: string;
-  crossPageEnter: boolean;
-}) {
+function HeroSubtext({ touchClass }: { touchClass: string }) {
   const noHover = usePrefersNoHover();
 
   const shared =
@@ -442,11 +430,11 @@ function HeroSubtext({
   let className = shared;
   let style: CSSProperties | undefined;
 
-  if (crossPageEnter || noHover === false) {
+  if (noHover === null || noHover) {
+    className += ` hero-subtext-touch ${touchClass}`;
+  } else {
     className += " hero-subtext-hover rise";
     style = { "--d": "150ms" } as CSSProperties;
-  } else if (noHover === null || noHover) {
-    className += ` hero-subtext-touch ${touchClass}`;
   }
 
   return (
@@ -457,20 +445,11 @@ function HeroSubtext({
   );
 }
 
-function Hero({
-  subtextTouchClass,
-  crossPageEnter,
-}: {
-  subtextTouchClass: string;
-  crossPageEnter: boolean;
-}) {
+function Hero({ subtextTouchClass }: { subtextTouchClass: string }) {
   return (
     <section className={`${CONTAINER} @container pt-40 pb-24 text-center md:pt-52 md:pb-32`}>
       <HeroHeadline />
-      <HeroSubtext
-        touchClass={subtextTouchClass}
-        crossPageEnter={crossPageEnter}
-      />
+      <HeroSubtext touchClass={subtextTouchClass} />
     </section>
   );
 }
@@ -577,8 +556,23 @@ function CaseStudyCard({
 }
 
 function SelectedWorks() {
+  const [enterMode, setEnterMode] = useState<"check" | "enter" | "none">(
+    "check",
+  );
+
+  useLayoutEffect(() => {
+    setEnterMode(consumeSectionEnter("work") ? "enter" : "none");
+  }, []);
+
+  const enterClass =
+    enterMode === "enter"
+      ? " work-cards-enter"
+      : enterMode === "check"
+        ? " work-cards-pending"
+        : "";
+
   return (
-    <section id="work" className={`${CONTAINER} pb-48`}>
+    <section id="work" className={`${CONTAINER} pb-48${enterClass}`}>
       <div className="mb-10">
         <SectionLabel icon={<CursorIcon className="size-[1.2lh]" />}>Work</SectionLabel>
       </div>
@@ -834,39 +828,21 @@ function SideQuests() {
 
 export default function Home() {
   const touchBlock = useTouchLandingSequence();
-  const contentFade = useTouchContentReveal();
   const mainRef = usePageEnterReplay<HTMLElement>();
-  const [crossPageEnter, setCrossPageEnter] = useState(
-    () =>
-      typeof window !== "undefined" && peekCrossPageHomeEnter(),
-  );
-
-  useLayoutEffect(() => {
-    if (peekCrossPageHomeEnter()) {
-      consumeCrossPageHomeEnter();
-      setCrossPageEnter(true);
-    }
-  }, []);
-
-  const belowHeroClass = crossPageEnter ? contentFade : touchBlock(2);
-  const subtextTouchClass = crossPageEnter ? "" : touchBlock(1);
 
   return (
     <>
       <GridOverlay />
       <main ref={mainRef} id="top" className="home-landing page-enter">
-        <Hero
-          subtextTouchClass={subtextTouchClass}
-          crossPageEnter={crossPageEnter}
-        />
-        <div className={belowHeroClass}>
+        <Hero subtextTouchClass={touchBlock(1)} />
+        <div className={touchBlock(2)}>
           <SelectedWorks />
         </div>
-        <div className={belowHeroClass}>
+        <div className={touchBlock(2)}>
           <SideQuests />
         </div>
       </main>
-      <div className={belowHeroClass}>
+      <div className={touchBlock(2)}>
         <ContactFooter />
       </div>
     </>

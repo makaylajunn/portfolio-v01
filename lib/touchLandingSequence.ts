@@ -5,7 +5,6 @@ import {
   usePrefersNoHover,
 } from "@/components/home/HeroHeadline";
 import { PAGE_RISE_MS } from "@/lib/pageEnterReplay";
-import { peekCrossPageHomeEnter } from "@/lib/sectionEnter";
 import { useEffect, useState } from "react";
 
 /** Keep in sync with `.home-touch-fade--in` transition in globals.css */
@@ -26,8 +25,7 @@ function touchBlockClass(
 
 function skipTouchLandingSequence() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
-  if (window.location.hash.replace(/^#/, "") !== "") return true;
-  return peekCrossPageHomeEnter();
+  return window.location.hash.replace(/^#/, "") !== "";
 }
 
 /** Touch landing: tagline intro → subtext fade → the rest of the page. */

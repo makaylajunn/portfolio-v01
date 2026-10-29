@@ -129,7 +129,6 @@ export function SiteNav() {
             href="/"
             className={logoClass}
             aria-label="Makayla Jun, home"
-            onClick={() => markSectionEnter("home")}
             onMouseEnter={playLogoSparkle}
             onFocus={playLogoSparkle}
           >

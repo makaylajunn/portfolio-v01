@@ -3,7 +3,6 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
   type AnimationEvent,
@@ -11,7 +10,6 @@ import {
   type ReactNode,
 } from "react";
 
-import { peekCrossPageHomeEnter } from "@/lib/sectionEnter";
 import happySvg from "./happy.svg";
 import nervousSvg from "./nervous.svg";
 import sadSvg from "./sad.svg";
@@ -631,7 +629,7 @@ function HeroHeadlineTouchIntro() {
   const [playComplex, setPlayComplex] = useState(false);
   const [introStarted, setIntroStarted] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     heroTouchIntroComplete = false;
     setStage(-1);
     setEmojiPinned(false);
@@ -645,8 +643,7 @@ function HeroHeadlineTouchIntro() {
 
     const skipIntro =
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      window.location.hash.replace(/^#/, "") !== "" ||
-      peekCrossPageHomeEnter();
+      window.location.hash.replace(/^#/, "") !== "";
 
     if (skipIntro) {
       schedule(0, () => {

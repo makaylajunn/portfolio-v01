@@ -1,6 +1,7 @@
 const STORAGE_KEY = "portfolio:section-enter";
+const SKIP_HERO_KEY = "portfolio:home-skip-hero";
 
-export type SectionEnterTarget = "home" | "work" | "play" | "contact";
+export type SectionEnterTarget = "work" | "play" | "contact" | "top";
 
 export function markSectionEnter(target: SectionEnterTarget) {
   try {
@@ -10,12 +11,41 @@ export function markSectionEnter(target: SectionEnterTarget) {
   }
 }
 
-export function peekSectionEnter(target: SectionEnterTarget): boolean {
+/** Full navigation to `/` from another route: skip touch hero intro; reveal like About. */
+export function markHomeLandingFromOffPage(target: SectionEnterTarget) {
+  markSectionEnter(target);
   try {
-    return sessionStorage.getItem(STORAGE_KEY) === target;
+    sessionStorage.setItem(SKIP_HERO_KEY, "1");
+  } catch {
+    /* private mode / blocked storage */
+  }
+}
+
+export function peekHomeSkipHeroIntro(): boolean {
+  try {
+    return sessionStorage.getItem(SKIP_HERO_KEY) === "1";
   } catch {
     return false;
   }
+}
+
+export function consumeHomeSkipHeroIntro(): boolean {
+  try {
+    if (sessionStorage.getItem(SKIP_HERO_KEY) === "1") {
+      sessionStorage.removeItem(SKIP_HERO_KEY);
+      return true;
+    }
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
+export function shouldHomeDirectLanding(): boolean {
+  if (typeof window === "undefined") return false;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
+  if (window.location.hash.replace(/^#/, "") !== "") return true;
+  return peekHomeSkipHeroIntro();
 }
 
 export function consumeSectionEnter(target: SectionEnterTarget): boolean {
@@ -28,21 +58,4 @@ export function consumeSectionEnter(target: SectionEnterTarget): boolean {
     /* ignore */
   }
   return false;
-}
-
-/** Home load after leaving another route (logo, work, fun — not contact; footer owns that). */
-export function peekCrossPageHomeEnter(): boolean {
-  return (
-    peekSectionEnter("home") ||
-    peekSectionEnter("work") ||
-    peekSectionEnter("play")
-  );
-}
-
-export function consumeCrossPageHomeEnter(): boolean {
-  return (
-    consumeSectionEnter("home") ||
-    consumeSectionEnter("work") ||
-    consumeSectionEnter("play")
-  );
 }
