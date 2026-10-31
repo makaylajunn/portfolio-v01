@@ -169,6 +169,7 @@ const CASE_STUDIES: CaseStudy[] = [
     ],
     links: [{ label: "View live impact map", href: "#" }],
     place: "md:col-start-8 md:col-span-5 md:row-start-2",
+    image: "/work/impact-map/desktop-impact-map.jpg",
     imageLabel: "Impact Map UI · 1600 × 1200",
   },
 ];
