@@ -24,8 +24,9 @@ export function SiteNav() {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const onAbout = pathname === "/about";
+  const onCaseStudy = pathname.startsWith("/work/");
   /** Pages that include ContactFooter with id="contact". */
-  const onPageWithContact = onHome || onAbout;
+  const onPageWithContact = onHome || onAbout || onCaseStudy;
   const { scene: activeScene, selectScene } = useActiveNavSection(
     onHome,
     onAbout,
@@ -49,7 +50,7 @@ export function SiteNav() {
       } else scrollToSectionId(sectionId);
       return;
     }
-    if (onAbout && sectionId === "contact") {
+    if ((onAbout || onCaseStudy) && sectionId === "contact") {
       event.preventDefault();
       markSectionEnter("contact");
       scrollContactIntoView();

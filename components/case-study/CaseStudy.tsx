@@ -1,8 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { BackToTopLink } from "@/components/BackToTopLink";
-import { LinkedInIcon, SubstackIcon } from "@/components/icons/BrandIcons";
-import { PROFILE } from "@/lib/profile";
+import { ContactFooter } from "@/components/ContactFooter";
 import type {
   CaseStudyContent,
   ChangeMedia,
@@ -72,7 +70,7 @@ export function CaseStudy({
         ) : null}
         {next ? <NextUp next={next} /> : null}
       </main>
-      <CaseFooter />
+      <ContactFooter />
       {chapters.length > 1 ? <ChapterNav chapters={chapters} /> : null}
     </>
   );
@@ -599,65 +597,3 @@ function NextUp({ next }: { next: CaseStudyContent }) {
   );
 }
 
-function CaseFooter() {
-  return (
-    <footer id="contact" className="p-4 pb-24 md:p-6 md:pb-24">
-      <div className="rounded-panel bg-sand pt-20 pb-8 md:pt-28">
-        <div className={CONTAINER}>
-          <p className={MONO_LABEL}>Contact</p>
-          <h2 className="mt-6 max-w-[14ch] font-primary text-h1 text-balance">
-            Let’s make something that <em>feels</em> right.
-          </h2>
-          <div className="mt-12 flex flex-wrap gap-3">
-            <a
-              href={`mailto:${PROFILE.email}`}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-deep px-5 py-3 font-secondary text-sm font-medium text-white transition-opacity hover:opacity-90"
-            >
-              {PROFILE.email}
-              <ArrowUpRight className="size-4" />
-            </a>
-            <a
-              href={PROFILE.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-ink/20 px-5 py-3 font-secondary text-sm font-medium transition-colors hover:border-slate-deep hover:bg-slate-deep hover:text-white"
-            >
-              <LinkedInIcon className="text-base" />
-              LinkedIn
-              <ArrowUpRight className="size-4" />
-            </a>
-            <a
-              href={PROFILE.substack}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-ink/20 px-5 py-3 font-secondary text-sm font-medium transition-colors hover:border-slate-deep hover:bg-slate-deep hover:text-white"
-            >
-              <SubstackIcon className="size-4" />
-              Substack
-              <ArrowUpRight className="size-4" />
-            </a>
-          </div>
-
-          <div className="mt-20 flex flex-col gap-4 border-t border-ink/10 pt-8 md:flex-row md:items-center md:justify-between">
-            <p className="font-secondary text-xs text-ink-muted">
-              © {PROFILE.name}. All rights reserved.
-            </p>
-            <div className="flex items-center gap-6">
-              <Link
-                href="/#work"
-                className={`${MONO_LABEL} transition-colors hover:text-ink`}
-              >
-                ← All work
-              </Link>
-              <BackToTopLink
-                className={`${MONO_LABEL} transition-colors hover:text-ink`}
-              >
-                Back to top ↑
-              </BackToTopLink>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
