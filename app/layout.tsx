@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Mono, Lora, Plus_Jakarta_Sans, Vibur } from "next/font/google";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { SiteNav } from "@/components/SiteNav";
 import "./globals.css";
 
@@ -39,6 +40,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${lora.variable} ${plusJakartaSans.variable} ${dmMono.variable} ${vibur.variable} h-full antialiased`}
     >
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body
         className="min-h-full flex flex-col overflow-x-clip"
         suppressHydrationWarning
