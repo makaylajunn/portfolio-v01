@@ -98,7 +98,7 @@ export function ImageSlot({
         fill
         sizes={sizes}
         priority={priority}
-        className="object-cover"
+        className={image.fit === "contain" ? "object-contain" : "object-cover"}
       />
     );
   }

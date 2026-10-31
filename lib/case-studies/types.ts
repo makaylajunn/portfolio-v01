@@ -19,6 +19,8 @@ export type ImageSpec = {
   /** What to drop here. Shown on the placeholder, e.g. "Before: checkout · 1600 × 1200". */
   label: string;
   ratio?: Ratio;
+  /** "cover" (default) crops to fill. "contain" shows the whole image, e.g. a phone screen. */
+  fit?: "cover" | "contain";
 };
 
 export type Stat = { value: string; label: string };

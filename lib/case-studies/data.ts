@@ -384,7 +384,7 @@ export const CASE_STUDY_CONTENT: CaseStudyContent[] = [
   },
 
   /* ------------------------------------------------------------------------
-     03 · Impact Map (a lighter version: one big change, one big number)
+     03 · Impact Map (no context chapter: opportunity, four design changes, retro)
      ------------------------------------------------------------------------ */
   {
     slug: "impact-map",
@@ -393,73 +393,153 @@ export const CASE_STUDY_CONTENT: CaseStudyContent[] = [
     hero: {
       title: "Grew platform views from 28k to 1.5M with a live Impact Map",
       summary:
-        "I designed and launched CarePortal’s first data-driven Impact Map. It turns abstract metrics into a story anyone can explore, and it’s fully accessible.",
+        "I designed CarePortal’s Impact Map from zero: a live map that turns real-time activity and cumulative impact into a story anyone can explore, on desktop and mobile.",
       period: "Sep ’22 – Nov ’22 · Launched Jan ’23",
       image: {
-        alt: "The CarePortal Impact Map",
-        label: "Impact Map UI · 1600 × 1200",
-        ratio: "21/9",
+        src: "/work/impact-map/desktop-impact-map.jpg",
+        alt: "The CarePortal Impact Map on desktop, showing the Network Data sidebar with total children served, economic impact, and response teams beside a map of the United States",
+        label: "Impact Map UI · 1600 × 1000",
+        ratio: "16/10",
       },
       snapshot: [
-        { label: "Role", value: "Product Designer, 0→1" },
-        { label: "Timeline", value: "Sep ’22 – Nov ’22" },
-        { label: "Team", value: "[Who you worked with]" },
-        { label: "Scope", value: "Interactive data map" },
+        { label: "Role", value: "Product Designer, 0→1 (UX/UI)" },
+        { label: "Team", value: "2 designers, with CarePortal stakeholders and engineers" },
+        { label: "Scope", value: "Live and Impact views, desktop and mobile" },
+        { label: "Tools", value: "Figma, FigJam, Mouseflow, Google Analytics" },
       ],
       outcomes: [
         { value: "28k → 1.5M", label: "platform views" },
         { value: "+5,289%", label: "YoY lift in platform views" },
         { value: "100%", label: "WCAG compliant" },
       ],
-      links: [{ label: "View live impact map", href: "#" }],
+      links: [
+        {
+          label: "View live impact map",
+          href: "https://system.careportal.org/map",
+        },
+      ],
     },
 
     problem: {
       eyebrow: "Opportunity",
-      heading: "Impressive numbers, but no one could see them",
+      heading: "Everything was on the map, so nothing stood out",
       statement:
-        "[CarePortal’s impact lived in spreadsheets. Without a way to see it, supporters couldn’t feel the scale of what they were part of.]",
+        "CarePortal’s one multi-purpose map mixed live requests with global impact. Outreach leaders like Kyle felt overwhelmed, so they built their own infographics instead.",
       framework: [
-        { label: "Status quo", body: "[How impact was shared before.]" },
-        { label: "If nothing changed", body: "[What would stay invisible.]" },
-        { label: "Desired outcome", body: "[A live, accessible view of reach.]" },
+        {
+          label: "Status quo",
+          body: "One map showed new requests and network-wide impact at once. It was hard to find, slow to load, and overwhelming to walk new people through.",
+        },
+        {
+          label: "If nothing changed",
+          body: "Prospective churches and partners would keep bouncing. Leaders like Kyle, an outreach lead in Kansas City, would keep rebuilding impact slides by hand.",
+        },
+        {
+          label: "Desired outcome",
+          body: "A self-explanatory map that pairs real-time activity with cumulative impact, and turns passive visitors into active responders.",
+        },
+      ],
+      visual: {
+        src: "/work/impact-map/legacy-map-children-served.jpg",
+        alt: "The original CarePortal map zoomed into Atlanta, covered in hundreds of orange children-served icons",
+        label: "Problem in context · original map · 1600 × 1000",
+        ratio: "16/10",
+      },
+      annotations: [
+        "Every child served was its own icon, so dense areas became a wall of orange.",
+        "Filters, toggles, and county outlines all competed for attention at once.",
+        "Regional managers called it slow and overwhelming to show to new people.",
       ],
     },
 
     design: {
       eyebrow: "Design change",
-      heading: "Making data feel human",
+      heading: "Four decisions that turned a data dump into a story",
+      intro:
+        "Seven prototypes and 18 usability studies in a 36-day sprint. These are the calls testing changed most.",
       changes: [
         {
-          eyebrow: "Change 01 · Storytelling",
-          heading: "I led with one place and one person before the whole map",
+          eyebrow: "Change 01 · Structure",
+          heading:
+            "I split one crowded map into Live and Impact modes, because showing everything at once was the problem",
           body: [
-            "[One sentence: how the map opens.]",
-            "[Why you started small and zoomed out. What users did with it.]",
+            "Testing showed the map was crowded before it was complicated.",
+            "Testers missed new requests when search hid behind a click, the header was vague, and the map opened full of pins. So Live stayed urgent and local, with a visible search bar, a “See Activity Near Me” button, and a “Now Viewing Live Activity” status. I showed state names permanently, colored active states white and unenrolled states gray, and started with fewer pins. (The shipped product labels the two modes Activity and Network.)",
+            "Less on screen meant the newest request was the first thing people saw.",
           ],
-          because: "[Why a big number alone doesn’t land.]",
+          because:
+            "Trying to show everything at once was the root of the overwhelm, so I gave each job its own mode instead of adding more controls.",
+          tradeoff:
+            "I cut “Export Data” and activity timestamps. Testers screenshotted the map for their slides anyway, and every extra control slowed the first read.",
           media: {
             type: "beforeAfter",
             before: {
-              alt: "The data before the map",
-              label: "Before · spreadsheet or static chart · 1600 × 1000",
+              src: "/work/impact-map/legacy-map.jpg",
+              alt: "The original CarePortal map, with request clusters, county outlines, and a dense filter bar",
+              label: "Before · original map · 1600 × 1000",
               ratio: "16/10",
             },
             after: {
-              alt: "The Impact Map",
+              src: "/work/impact-map/desktop-impact-map.jpg",
+              alt: "The Impact Map in Network view, with gray unenrolled states, white active states, and permanent state names",
               label: "After · Impact Map · 1600 × 1000",
               ratio: "16/10",
             },
           },
         },
         {
-          eyebrow: "Change 02 · Accessibility",
-          heading: "I made the map work without a mouse, a screen, or color",
+          eyebrow: "Change 02 · Impact view",
+          heading:
+            "I swapped mystery orbs for color-coded icons that match the numbers beside them",
           body: [
-            "[One sentence: the accessibility challenge a map creates.]",
-            "[What you did: keyboard paths, text alternatives, contrast.] [Why that mattered here.]",
+            "Impact had to prove long-term return, not just look good.",
+            "In mid-fidelity, yellow orbs sat next to sidebar trend graphs. Testers didn’t know the orbs were clickable, didn’t understand the graph titles, and couldn’t see the white buttons on mobile. So I gave each metric its own icon, added an info button to every graph, and kept state names visible so no one hovered over regions CarePortal hadn’t reached.",
+            "The live map now shows 554K+ children served, $210M+ in economic impact, and 9,000+ response teams.",
           ],
-          because: "[Why accessibility was part of the story, not an add-on.]",
+          because:
+            "A color or shape should mean one thing. When the icon matches the metric beside it, people can scan the map without a manual.",
+          media: {
+            type: "single",
+            image: {
+              src: "/work/impact-map/mobile-impact-map.png",
+              alt: "The mobile Network view, with color-coded pins, Map Legend and Find Me buttons, and the Network Data panel showing total children served",
+              label: "Impact view · mobile · 1600 × 1000",
+              ratio: "16/10",
+              fit: "contain",
+            },
+          },
+        },
+        {
+          eyebrow: "Change 03 · Conversion",
+          heading:
+            "I made every pin and every gray state a next step, not a dead end",
+          body: [
+            "A marketing map only works if curiosity turns into care.",
+            "Clicking a live request opens a story drawer that explains the family’s need first, then offers one clear action: “Yes, I Can Help!”, which routes into sign-in and church onboarding. Clicking a gray, unenrolled state opens an “Activate a State” modal, with “Learn More” and “Join CarePortal” paths for referring a local church.",
+            "Kyle’s path is three steps: find a request near him, read the story, and say yes.",
+          ],
+          because:
+            "Visitors who feel something need somewhere to put it. A dead end after the click would waste the exact moment the map exists for.",
+          media: {
+            type: "single",
+            image: {
+              alt: "A live request story drawer with the Yes, I Can Help button, and the Activate a State modal",
+              label: "Request drawer + Activate a State modal · 1600 × 1000",
+              ratio: "16/10",
+            },
+          },
+        },
+        {
+          eyebrow: "Change 04 · Accessibility",
+          heading:
+            "I reworked the map’s color, type, and controls when CarePortal became accessibility-certified",
+          body: [
+            "A map leans on color and a mouse, which is exactly where accessibility breaks.",
+            "When CarePortal became accessibility-certified, I led the update. I revised the color scheme to meet WCAG contrast standards, updated text styles and spacing for readability, and made sure interactive elements worked with a keyboard and a screen reader.",
+            "I wrote those changes into the style guides I handed to engineering, then ran design QA so the build stayed true to them.",
+          ],
+          because:
+            "Once CarePortal was certified, the map had to meet the same bar as the rest of the product, and the updated specs had to actually reach the code.",
           media: {
             type: "single",
             image: {
@@ -474,30 +554,63 @@ export const CASE_STUDY_CONTENT: CaseStudyContent[] = [
 
     retrospective: {
       eyebrow: "Retrospective",
-      heading: "When data becomes a story, people share it",
+      heading: "When data becomes a story, people come to see it",
+      intro: "The numbers, then what a 36-day sprint taught me.",
       impact: [
         {
           lens: "Users",
           title: "A map people actually looked at",
-          body: "Platform views grew from 28k to 1.5M, and the redesigned map is fully WCAG compliant.",
+          body: "Platform views grew from 28k to 1.5M. Visitors can see requests met in their state and the real-time difference they’re making.",
           stats: [
             { value: "+5,289%", label: "YoY platform views" },
             { value: "100%", label: "WCAG compliant" },
           ],
         },
         {
+          lens: "Business",
+          title: "A storytelling tool for growth and outreach",
+          body: "The map became a centerpiece of CarePortal’s rebrand. It shows partners, donors, and new churches the reach of the network, and it lifted engagement, site traffic, and brand trust.",
+        },
+        {
+          lens: "Process",
+          title: "Fast, tested, and built to spec",
+          body: "I delivered style guides for color, type, and UI elements, ran design QA on the build, and kept answering engineering’s questions after handoff while I moved on to the authenticated Technical Map.",
+          stats: [
+            { value: "36", label: "days, start to handoff" },
+            { value: "7", label: "prototypes" },
+            { value: "18", label: "usability studies, 5 rounds of iteration" },
+          ],
+        },
+        {
           lens: "You",
-          title: "[What this taught you about data and design]",
-          body: "[Specific, honest, personal.]",
+          title: "Getting feedback on something that didn’t exist yet",
+          body: "People can’t react to a product they’ve never seen. I tested with concept sketches and Figma prototypes, borrowed best practices from competitors, and iterated on stakeholder feedback.",
         },
       ],
       learnings: [
         {
-          title: "[A learning about telling stories with data]",
-          body: "[What surprised you.]",
+          title: "Ask why before designing a workaround",
+          body: "What’s presented as a problem often isn’t a hard constraint. Questioning it early saved me from designing around things that didn’t need it.",
+        },
+        {
+          title: "Unify patterns across modes",
+          body: "Splitting Live and Impact filters in mid-fidelity raised cognitive load. One filter set with a “Clear All” button kept people grounded in both views.",
+        },
+        {
+          title: "Design for what people actually do",
+          body: "Testers skipped “Export Data” and took screenshots. I cut the feature, and the interface got lighter.",
         },
       ],
-      reflection: "[One honest sentence from the heart.]",
+      whatIf: [
+        "How many “Yes, I Can Help!” clicks turn into onboarded churches",
+        "Testimonial pins alongside open requests, from the discovery wish list",
+        "County-level impact, so leaders like Kyle can see their own county",
+      ],
+      nextSteps: [
+        "Extend the same patterns into CarePortal’s authenticated Technical Map",
+      ],
+      reflection:
+        "This map is more than data or a marketing tool. It’s a visual story of real change, happening in real time.",
     },
   },
 ];
